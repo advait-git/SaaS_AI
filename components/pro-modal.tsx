@@ -8,6 +8,8 @@ import { Check, CodeIcon, ImageIcon, MessageSquare, Music, VideoIcon, Zap } from
 import { Card } from "./ui/card";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
+import axios from "axios";
+import { useState } from "react";
 
 const tools=[
     {
@@ -48,6 +50,20 @@ const tools=[
 export const ProModal = () => {
 
     const proModal = useProModal();
+    const [loading,setLoading] = useState(false);
+
+    const onSubscribe = async () => {
+        try{
+            setLoading(true);
+            const response = axios.get("/api/stripe");
+
+            window.location.href = (await response).data.url;
+        } catch (error) {
+            console.log(error, "STRIPE_CLIENT_ERROR");
+        } finally{
+            setLoading(false);
+        }
+    }
 
     return (
         <Dialog open={proModal.isOpen} onOpenChange={proModal.onClose}>
@@ -82,6 +98,7 @@ export const ProModal = () => {
                 </DialogHeader>
                 <DialogFooter>
                     <Button
+                        onClick={onSubscribe}
                         size="lg"
                         variant="upgrade"
                         className="w-full"
